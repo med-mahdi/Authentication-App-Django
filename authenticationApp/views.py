@@ -3,19 +3,23 @@ from django.http import HttpResponse
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate , login , logout
 from .forms import CreateUserForm
-from .functions import userCreationChecker
+from .functions import userCreationChecker,checkUserExists,sendEmail
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from .models import UserProfile
 from django.contrib.auth.decorators import login_required
 from .decorators import *
-
+# Import Packages For Email
+from email.message import EmailMessage
+import ssl
+import smtplib
+# Import Django Messages
+from django.contrib import messages
 
 
 
 def testView(request):
-    
-    return HttpResponse('<h1> Hey There</h1>')
+    return HttpResponse('<h1>Test Page</h1>')
 
 
 
@@ -33,7 +37,7 @@ def registerPage(request):
             try:
                 username = firstname + lastname
                 new_user = User.objects.create_user(username=username, email = userEmail , password=password)
-                user_profile = UserProfile.objects.create(user=new_user,fname=firstname,lname=lastname, emailAddress= userEmail)
+                user_profile = UserProfile.objects.create(user=new_user,emailAddress= userEmail)
                 clientGroup = Group.objects.get(name='clients')
                 clientGroup.user_set.add(new_user)
                 user_profile.save()
@@ -66,9 +70,27 @@ def loginPage(request):
 def logoutPage(request):
     logout(request)
     return redirect('loginPage')    
+    
+
+
+def forgetPassword(request):
+    if request.method == 'POST':
+        usernameSubmitted = request.POST.get('username')
+        userExist = checkUserExists(usernameSubmitted)
+        if (userExist == True):
+            myuser = User.objects.get(username=usernameSubmitted)
+            userEmail = (myuser.userprofile.emailAddress)
+            messageSent = sendEmail(userEmail,"Email Subject","The Mail Body")
+            if (messageSent == True):
+                messages.success(request, "Send Message To Email Including Generated Url")
+            else:
+                messages.error(request, "Error While Sending Email Message!")
+        else:
+            messages.error(request, "User Not Exist To Send Message To !" )
+    return render(request, "forgetPassword.html")
 
 
 
 @login_required(login_url='loginPage')
 def homePage(request):
-    return HttpResponse("Home page lmao")    
+    return HttpResponse("Home page lmao")
