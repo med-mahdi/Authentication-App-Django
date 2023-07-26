@@ -70,7 +70,7 @@ def loginPage(request):
 def logoutPage(request):
     logout(request)
     return redirect('loginPage')    
-    
+
 
 
 def forgetPassword(request):
@@ -88,6 +88,11 @@ def forgetPassword(request):
         else:
             messages.error(request, "User Not Exist To Send Message To !" )
     return render(request, "forgetPassword.html")
+
+
+#> Add a decorator to check if the request Token is valid
+def changePasswordToken(request):
+    return HttpResponse("This View That Take Care of Updating Password After Forgetting Password")
 
 
 

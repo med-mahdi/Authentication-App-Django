@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+import secrets
 # Import Packages For Email
 from email.message import EmailMessage
 import ssl
@@ -45,3 +46,8 @@ def sendEmail(email_receiver,subject,body):
         smtp.login(email_sender, email_password)
         smtp.sendmail(email_sender, email_receiver, emailMessage.as_string())
         return True
+    
+
+#> This Functionis Used to Generate A Random Token For The User
+def generate_token():
+    return secrets.token_urlsafe(16)
