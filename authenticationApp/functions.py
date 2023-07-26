@@ -32,8 +32,8 @@ def checkUserExists(username):
 
 #> This function is used to send Email
 def sendEmail(email_receiver,subject,body):
-    email_sender = "mehdihyad.mh@gmail.com"
-    email_password = "f a e h l s u h l m h y v b a x"
+    email_sender = "youremail@gmail.com"
+    email_password = "app email password"
     emailMessage = EmailMessage()
     emailMessage['From'] = email_sender
     emailMessage['To'] = email_receiver
